@@ -394,7 +394,7 @@ public class CryptoToolkit {
                     }
                     case "6": {
                         if (!rsaReady()) break;
-                        String msg = ask("Message to sign", "pay Alice 10");
+                        String msg = ask("Message to sign", "pay Tom 10");
                         BigInteger h = msgHash(msg.getBytes(StandardCharsets.UTF_8));
                         BigInteger sig = h.modPow(rsaD, rsaN);
                         info("SHA-256(message) mod n = " + h);
@@ -404,7 +404,7 @@ public class CryptoToolkit {
                     }
                     case "7": {
                         if (!rsaReady()) break;
-                        String msg = ask("Message", "pay Alice 10");
+                        String msg = ask("Message", "pay Tom 10");
                         BigInteger sig = new BigInteger(ask("Signature", null));
                         BigInteger expected = msgHash(msg.getBytes(StandardCharsets.UTF_8));
                         BigInteger recovered = sig.modPow(rsaE, rsaN);
@@ -545,7 +545,7 @@ public class CryptoToolkit {
             item("2", "Show curve parameters" + (curve == TOY ? " and list all points" : ""));
             item("3", "Point arithmetic  (k*G with trace, or aG + bG)");
             item("4", "Generate key pair");
-            item("5", "ECDH key exchange (Alice <-> Bob)");
+            item("5", "ECDH key exchange (Tom <-> Bob)");
             item("6", "ECDSA sign");
             item("7", "ECDSA verify");
             item("8", "Encrypt text (ECIES-style, to the public key)");
@@ -608,12 +608,12 @@ public class CryptoToolkit {
                     case "5": {
                         BigInteger da = randomScalar(curve), db = randomScalar(curve);
                         Pt qa = curve.mul(da, curve.g, false), qb = curve.mul(db, curve.g, false);
-                        out("Alice d", da.toString());
-                        out("Alice Q", qa.toString());
+                        out("Tom d", da.toString());
+                        out("Tom Q", qa.toString());
                         out("Bob d", db.toString());
                         out("Bob Q", qb.toString());
                         Pt sa = curve.mul(da, qb, false), sb = curve.mul(db, qa, false);
-                        out("Alice S", sa.toString());
+                        out("Tom S", sa.toString());
                         out("Bob S", sb.toString());
                         if (sa.equals(sb)) ok("Both parties derived the same shared secret."); else err("Mismatch!");
                         if (!sa.inf()) out("SHA-256(S.x)", hex(Hash.sha256(sa.x.toByteArray())));
@@ -918,7 +918,7 @@ public class CryptoToolkit {
         BigInteger da = randomScalar(cv), db = randomScalar(cv);
         Pt qa = cv.mul(da, cv.g, false), qb = cv.mul(db, cv.g, false);
         Pt sa = cv.mul(da, qb, false), sb = cv.mul(db, qa, false);
-        check("Alice and Bob derived the same secret", sa.equals(sb));
+        check("Tom and Bob derived the same secret", sa.equals(sb));
         byte[] digest = Hash.sha256(sa.x.toByteArray());
         String key = bin(((digest[0] & 0xff) << 2) | ((digest[1] & 0xff) >> 6), 10);
         out("S-DES key", key + "   (first 10 bits of SHA-256 of the shared secret)");
